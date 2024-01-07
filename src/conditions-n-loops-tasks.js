@@ -443,6 +443,51 @@ function rotateMatrix(matrix) {
   return matrix;
 }
 
+function partition(arr, left, right) {
+  const array = arr;
+  const middle = Math.floor((right + left) / 2);
+  const pivot = array[middle];
+  let i = left;
+  let j = right;
+
+  while (i <= j) {
+    while (array[i] < pivot) {
+      i += 1;
+    }
+
+    while (array[j] > pivot) {
+      j -= 1;
+    }
+
+    if (i <= j) {
+      [array[i], array[j]] = [array[j], array[i]];
+      i += 1;
+      j -= 1;
+    }
+  }
+
+  return i;
+}
+
+function quickSort(array, left, right) {
+  const len = array.length;
+  let index;
+
+  if (len > 1) {
+    index = partition(array, left, right);
+
+    if (left < index - 1) {
+      quickSort(array, left, index - 1);
+    }
+
+    if (index < right) {
+      quickSort(array, index, right);
+    }
+  }
+
+  return array;
+}
+
 /**
  * Sorts an array of numbers in ascending order in place.
  * Employ any sorting algorithm of your choice.
@@ -458,22 +503,7 @@ function rotateMatrix(matrix) {
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
 function sortByAsc(arr) {
-  const array = arr;
-  const n = array.length;
-
-  for (let i = 1; i < n; i += 1) {
-    const key = array[i];
-    let j = i - 1;
-
-    while (j >= 0 && array[j] > key) {
-      array[j + 1] = array[j];
-      j -= 1;
-    }
-
-    array[j + 1] = key;
-  }
-
-  return array;
+  return quickSort(arr, 0, arr.length - 1);
 }
 
 /**
@@ -493,30 +523,32 @@ function sortByAsc(arr) {
  *  '012345', 3 => '024135' => '043215' => '031425'
  *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'
  */
-function shuffleChar(str, iterations) {
-  const strArray = [];
-  for (let i = 0; i < str.length; i += 1) {
-    strArray[i] = str[i];
-  }
-  let iter = iterations;
-  while (iter > 0) {
-    let i = 1;
-    while (i < Math.floor(strArray.length / 2) + 1) {
-      const temp = strArray[i];
-      for (let j = i; j < strArray.length - 1; j += 1) {
-        strArray[j] = strArray[j + 1];
+function shuffleChar(inputStr, numIterations) {
+  let resultStr = inputStr;
+  const results = [resultStr];
+  const strLength = resultStr.length;
+
+  for (let iteration = 1; iteration <= numIterations; iteration += 1) {
+    let oddChars = '';
+    let evenChars = '';
+
+    for (let i = 0; i < strLength; i += 1) {
+      if (i % 2 === 0) {
+        evenChars += resultStr[i];
+      } else {
+        oddChars += resultStr[i];
       }
-      strArray[strArray.length - 1] = temp;
-      i += 1;
     }
 
-    iter -= 1;
+    resultStr = evenChars + oddChars;
+    results[iteration] = resultStr;
+
+    if (resultStr === inputStr) {
+      return results[numIterations % iteration];
+    }
   }
-  let result = '';
-  for (let i = 0; i < strArray.length; i += 1) {
-    result += strArray[i];
-  }
-  return result;
+
+  return resultStr;
 }
 
 /**
